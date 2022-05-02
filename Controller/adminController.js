@@ -1,4 +1,4 @@
-const userModel = require("../Model/userModel")
+const AdminModel = require("../Model/AdminModel")
 const jwt = require("jsonwebtoken")
 //let exporter = process.exporter;
 
@@ -13,7 +13,7 @@ const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
 
-const resisterUser = async function (req, res) {
+const Admin = async function (req, res) {
     try {
         const requestBody = req.body
 
@@ -42,7 +42,7 @@ const resisterUser = async function (req, res) {
 
         const userData = { name, email, password }
 
-        let saveduser = await userModel.create(userData)
+        let saveduser = await AdminModel.create(userData)
         res.status(201).send({ status: true, data: saveduser })
     }
     catch (err) {
@@ -73,24 +73,22 @@ const login = async function (req, res) {
 
         if (email && password) {
 
-            let User = await userModel.findOne({ email: email })
+            let User = await AdminModel.findOne({ email: email })
 
             const Token = jwt.sign({ userId: User._id, exp: Math.floor(Date.now() / 1000) + 30 * 60 }, "pk")
 
             //
-            // Creating Cookie for Auth
-            res.cookie('jwt', Token, {
-                expires: new Date(Date.now() + process.env.JWT_TOKEN),
-                // secure:true,
-                httpOnly: true,
-            })
+            // // Creating Cookie for Auth
+            // res.cookie('jwt', Token, {
+            //     expires: new Date(Date.now() + process.env.JWT_TOKEN),
+            //     // secure:true,
+            //     httpOnly: true,
+            // })
 
-
-            logout = (req, res) => {
-                res.clearCookie('jwt')
-                res.clearCookie('user')
-
-            }
+            // logout = (req, res) => {
+            //     res.clearCookie('jwt')
+            //     res.clearCookie('user')
+            // }
             //
             res.header('x-api-key', Token)
 
@@ -105,6 +103,5 @@ const login = async function (req, res) {
 }
 
 
-
-module.exports = { resisterUser, login }
+module.exports = { Admin, login }
 
